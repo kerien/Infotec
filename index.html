@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Informe Técnico</title>
+
+<style>
+:root{
+  --blue:#0078D4;
+  --blue-hover:#0063b1;
+  --success:#27ae60;
+  --success-hover:#219150;
+  --neutral:#f3f6fb;
+  --border:#cfe0f5;
+}
+
+body{
+  margin:0;
+  font-family:"Segoe UI", Arial, sans-serif;
+  background:var(--blue);
+  display:flex;
+  justify-content:center;
+  padding:16px;
+}
+
+.container{
+  width:100%;
+  max-width:900px;
+  background:#fff;
+  border-radius:14px;
+  padding:22px;
+  box-shadow:0 25px 60px rgba(0,0,0,.25);
+}
+
+h2{
+  text-align:center;
+  color:var(--blue);
+  margin-bottom:24px;
+}
+
+h3{
+  color:var(--blue);
+  border-left:5px solid var(--blue);
+  padding-left:10px;
+  font-size:16px;
+}
+
+.card{
+  border:1px solid #e9e9e9;
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:18px;
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
+}
+
+input,textarea,select{
+  width:100%;
+  padding:11px;
+  margin-top:8px;
+  margin-bottom:12px;
+  border:1px solid #d0d0d0;
+  border-radius:8px;
+  box-sizing:border-box;
+}
+
+input:focus,textarea:focus,select:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(0,120,212,.2);
+  outline:none;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  margin-top:10px;
+  margin-bottom:6px;
+  color:#333;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s;
+}
+
+/* 🔵 BOTÓN PRINCIPAL */
+button[type="submit"]{
+  background:var(--blue);
+  color:#fff;
+}
+
+button[type="submit"]:hover{
+  background:var(--blue-hover);
+  transform:translateY(-1px);
+}
+
+/* 👁 PREVIEW */
+#previewBtn{
+  background:var(--neutral);
+  color:var(--blue);
+  border:1px solid var(--border);
+}
+
+/* 📋 COPIAR */
+#copyBtn{
+  display:none;
+  margin-top:10px;
+  background:var(--success);
+  color:#fff;
+}
+
+#copyBtn:hover{
+  background:var(--success-hover);
+}
+
+#previewBox{
+  display:none;
+  margin-top:15px;
+  padding:25px;
+  border:1px solid #ddd;
+  overflow-x:auto;
+}
+
+@media(max-width:768px){
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🧾 Informe Técnico</h2>
+
+<form id="form">
+
+<div class="card">
+  <h3>Contacto en Sitio</h3>
+
+  <div class="grid">
+    <input name="nombre" placeholder="Nombre y Apellido">
+    <input name="cargo" placeholder="Cargo">
+  </div>
+
+  <div class="grid">
+    <input name="mail" placeholder="Mail">
+    <input name="telefono" placeholder="Teléfono/Celular">
+  </div>
+</div>
+
+<div class="card">
+  <h3>Actualización de datos</h3>
+
+  <label>Se generó Formulario de actualización de datos del establecimiento? (Si/No)</label>
+  <select name="actualizacion_datos">
+    <option>SI</option>
+    <option>NO</option>
+  </select>
+</div>
+
+<div class="card">
+  <h3>Status de conectividad</h3>
+
+  <label>Inspección Estado enlaces (Routers/ONT/CPE)</label>
+  <input name="inspeccion_enlaces">
+
+  <label>Informe Conectividad Wireless</label>
+  <input name="informe_wireless">
+
+  <div class="grid">
+    <input name="speedtest_wireless_descarga" placeholder="Descarga Wireless (solo valores)">
+    <input name="speedtest_wireless_carga" placeholder="Carga Wireless (solo valores)">
+  </div>
+
+  <label>Informe Conectividad LAN</label>
+  <input name="informe_lan">
+
+  <div class="grid">
+    <input name="speedtest_lan_descarga" placeholder="Descarga LAN (solo valores)">
+    <input name="speedtest_lan_carga" placeholder="Carga LAN (solo valores)">
+  </div>
+
+  <label>Red Comunidad Activa</label>
+  <select name="red_comunidad_activa">
+    <option>SI</option>
+    <option>NO</option>
+  </select>
+
+  <label>Usuarios SADE</label>
+  <input name="usuarios_sade">
+</div>
+
+<div class="card">
+  <h3>Resolución</h3>
+  <textarea name="resolucion" style="min-height:180px;"></textarea>
+</div>
+
+<div class="card">
+  <h3>Vista previa del informe</h3>
+
+  <button type="button" id="previewBtn">Ver vista previa</button>
+  <button type="button" id="copyBtn">📋 Copiar Informe con Diseño</button>
+
+  <div id="previewBox"></div>
+</div>
+
+<button type="submit">Enviar Informe</button>
+
+</form>
+
+</div>
+
+<script>
+
+const $ = (name) =>
+  document.querySelector(`[name="${name}"]`)?.value || "";
+
+const escapeHtml = (str="") =>
+  str.replaceAll("&","&amp;")
+     .replaceAll("<","&lt;")
+     .replaceAll(">","&gt;")
+     .replaceAll('"',"&quot;")
+     .replaceAll("'","&#039;");
+
+const tdLabel = `
+border:1px dotted #000;
+padding:6px;
+font-size:13px;
+font-weight:600;
+width:45%;
+vertical-align:top;
+`;
+
+const tdValue = `
+border:1px dotted #000;
+padding:6px;
+font-size:13px;
+vertical-align:top;
+`;
+
+const row = (label, value) => `
+<tr>
+  <td style="${tdLabel}">${label}</td>
+  <td style="${tdValue}">${value || "-"}</td>
+</tr>`;
+
+function generarDocumento(){
+
+  const resolucion = escapeHtml($("resolucion"));
+
+  return `
+<div style="font-family:'Segoe UI',Arial;color:#000;max-width:800px;margin:auto">
+
+<h2 style="text-align:center">Informe Técnico</h2>
+
+<h3>Contacto en Sitio</h3>
+<table style="width:100%;border-collapse:collapse">
+${row("Nombre y Apellido", escapeHtml($("nombre")))}
+${row("Cargo", escapeHtml($("cargo")))}
+${row("Mail", escapeHtml($("mail")))}
+${row("Teléfono", escapeHtml($("telefono")))}
+</table>
+
+<h3>Actualización de datos</h3>
+<table style="width:100%">
+${row("Formulario actualización de datos del establecimiento", $("actualizacion_datos"))}
+</table>
+
+<h3>Status de Conectividad</h3>
+<table style="width:100%">
+${row("Inspección Estado enlaces (Routers/ONT/CPE)", escapeHtml($("inspeccion_enlaces")))}
+${row("Wireless", escapeHtml($("informe_wireless")))}
+${row("Speedtest Wireless", `Descarga: ${$("speedtest_wireless_descarga")} Mb/s - Carga: ${$("speedtest_wireless_carga")} Mb/s`)}
+${row("LAN", escapeHtml($("informe_lan")))}
+${row("Speedtest LAN", `Descarga: ${$("speedtest_lan_descarga")} Mb/s - Carga: ${$("speedtest_lan_carga")} Mb/s`)}
+${row("Red Comunidad Activa", $("red_comunidad_activa"))}
+${row("Usuarios SADE", escapeHtml($("usuarios_sade")))}
+</table>
+
+<h3>Resolución</h3>
+<div style="border:1px dotted #000;padding:15px;white-space:pre-wrap">
+${resolucion || "No se ingresó ninguna resolución."}
+</div>
+
+</div>`;
+}
+
+const previewBox = document.getElementById("previewBox");
+const copyBtn = document.getElementById("copyBtn");
+
+document.getElementById("previewBtn").addEventListener("click", () => {
+  previewBox.innerHTML = generarDocumento();
+  previewBox.style.display = "block";
+  copyBtn.style.display = "block";
+});
+
+copyBtn.addEventListener("click", async () => {
+  const html = generarDocumento();
+
+  const blobHtml = new Blob([html], { type:"text/html" });
+
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+
+  const item = new ClipboardItem({
+    "text/html": blobHtml,
+    "text/plain": new Blob([tmp.innerText], { type:"text/plain" })
+  });
+
+  try{
+    await navigator.clipboard.write([item]);
+    copyBtn.textContent = "✔ Copiado";
+    setTimeout(()=>copyBtn.textContent="📋 Copiar Informe con Diseño",1500);
+  }catch(e){
+    alert("Error al copiar");
+  }
+});
+
+</script>
+
+</body>
+</html>
