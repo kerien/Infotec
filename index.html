@@ -162,10 +162,10 @@ function generarHTML() {
 
   var h = '';
   h += '<div style="' + TNR + 'font-size:12pt;color:#000;width:760px;margin:auto;padding:20px;background:#fff;line-height:1.4;box-sizing:border-box;">';
-  h += '<p style="' + TNR + 'font-size:24pt;font-weight:bold;color:#000;margin:0 0 6px;padding:0;">Informe T&eacute;cnico</p>';
+  h += '<h1 style="' + TNR + 'font-size:24pt;color:#000;margin:0 0 6px;padding:0;">Informe T&eacute;cnico</h1>';
   h += '<p style="' + BASE + 'margin:0 0 14px;padding:0;">Completar la totalidad de los campos que figuran a continuacion:</p>';
 
-  h += '<p style="' + SEC + '">Contacto en Sitio</p>';
+  h += '<h3 style="' + SEC + '">Contacto en Sitio</h3>';
   h += '<table style="' + TBL + '">';
   h += row('Nombre y Apellido', esc(val('nombre')));
   h += row('Cargo',             esc(val('cargo')));
@@ -173,11 +173,11 @@ function generarHTML() {
   h += row('Telefono/Celular',  esc(val('telefono')));
   h += '</table>';
 
-  h += '<p style="' + BASE + 'font-weight:bold;margin:18px 0 10px;padding:0;">'
-     + 'Se genero Formulario de actualizaci&oacute;n de datos del establecimiento? (Si/No):&nbsp;'
-     + '<span style="font-weight:normal;">' + esc(val('actualizacion_datos')) + '</span></p>';
+  h += '<p style="' + BASE + 'margin:18px 0 10px;padding:0;">'
+     + '<b>Se genero Formulario de actualizaci&oacute;n de datos del establecimiento? (Si/No):</b>&nbsp;'
+     + esc(val('actualizacion_datos')) + '</p>';
 
-  h += '<p style="' + SEC + '">Status de conectividad</p>';
+  h += '<h3 style="' + SEC + '">Status de conectividad</h3>';
   h += '<table style="' + TBL + '">';
   h += row('Inspeccion Estado enlaces (Routers/ONT/CPE)', esc(val('inspeccion_enlaces')),       '38%');
   h += row('Informe Conectividad Wireless',               esc(val('informe_wireless')),         '38%');
@@ -188,7 +188,7 @@ function generarHTML() {
   h += row('Usuarios SADE (separados por coma)',           esc(val('usuarios_sade')),            '38%');
   h += '</table>';
 
-  h += '<p style="' + SEC + '">Resoluci&oacute;n</p>';
+  h += '<h3 style="' + SEC + '">Resoluci&oacute;n</h3>';
   h += '<p style="' + BASE + 'margin:0 0 6px;padding:0;">Informar en detalle las actividades realizadas, incluyendo comunicacion mantenida con otros soportes (Centro de Monitoreo, MDE, proveedores, etc) para arribar a la solucion.</p>';
   h += '<table style="' + TBL + '">';
   h += '<tr><td style="' + TDST + 'height:300px;white-space:pre-wrap;">' + esc(val('resolucion')) + '</td></tr>';
