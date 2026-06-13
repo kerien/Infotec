@@ -145,9 +145,9 @@ var TNR   = 'font-family:Times New Roman,Times,serif;';
 var BASE  = TNR + 'font-size:12pt;color:#000;';
 var TDST  = BASE + 'padding:3px 6px;vertical-align:top;border:1px dotted #999;';
 
-function row(label, value) {
+function row(label, value, lblWidth) {
   return '<tr>'
-    + '<td style="' + TDST + 'width:29%;">' + label + '</td>'
+    + '<td style="' + TDST + 'width:' + (lblWidth || '29%') + ';">' + label + '</td>'
     + '<td style="' + TDST + '">' + (value || '') + '</td>'
     + '</tr>';
 }
@@ -179,13 +179,13 @@ function generarHTML() {
 
   h += '<p style="' + SEC + '">Status de conectividad</p>';
   h += '<table style="' + TBL + '">';
-  h += row('Inspeccion Estado enlaces (Routers/ONT/CPE)', esc(val('inspeccion_enlaces')));
-  h += row('Informe Conectividad Wireless',               esc(val('informe_wireless')));
-  h += row('Speedtest red wireless (solo valores)',        'Descarga: ' + sd + ' Mb/s &nbsp;&nbsp; Carga: ' + sc + ' Mb/s');
-  h += row('Informe Conectividad LAN',                    esc(val('informe_lan')));
-  h += row('Speedtest red LAN (solo valores)',             'Descarga: ' + ld + ' Mb/s &nbsp;&nbsp; Carga: ' + lc + ' Mb/s');
-  h += row('Red Comunidad Activa (SI/NO)',                 esc(val('red_comunidad_activa')));
-  h += row('Usuarios SADE (separados por coma)',           esc(val('usuarios_sade')));
+  h += row('Inspeccion Estado enlaces (Routers/ONT/CPE)', esc(val('inspeccion_enlaces')),       '38%');
+  h += row('Informe Conectividad Wireless',               esc(val('informe_wireless')),         '38%');
+  h += row('Speedtest red wireless (solo valores)',        'Descarga: ' + sd + ' Mb/s &nbsp;&nbsp; Carga: ' + sc + ' Mb/s', '38%');
+  h += row('Informe Conectividad LAN',                    esc(val('informe_lan')),               '38%');
+  h += row('Speedtest red LAN (solo valores)',             'Descarga: ' + ld + ' Mb/s &nbsp;&nbsp; Carga: ' + lc + ' Mb/s', '38%');
+  h += row('Red Comunidad Activa (SI/NO)',                 esc(val('red_comunidad_activa')),     '38%');
+  h += row('Usuarios SADE (separados por coma)',           esc(val('usuarios_sade')),            '38%');
   h += '</table>';
 
   h += '<p style="' + SEC + '">Resoluci&oacute;n</p>';
@@ -240,6 +240,6 @@ copyBtn.addEventListener('click', async function() {
 });
 
 </script>
-
+  
 </body>
 </html>
