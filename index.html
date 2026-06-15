@@ -8,19 +8,19 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#EEF3F1;
+    --bg:#EBF2F9;
     --surface:#FFFFFF;
-    --ink:#1C2B2A;
-    --ink-soft:#5B6E6C;
+    --ink:#1B2630;
+    --ink-soft:#5C6B7A;
     --accent:#0078D4;
     --accent-dark:#005A9E;
-    --accent-soft:#E3F1ED;
+    --accent-soft:#DEECF9;
     --amber:#E8A33D;
     --coral:#E8674A;
-    --border:#D6E0DD;
+    --border:#D7E3EE;
     --bar-bg:#0C2D4A;
     --bar-bg-2:#163E5F;
-    --bar-text-soft:#bed6eb;
+    --bar-text-soft:#8FB4D4;
     --radius:10px;
   }
 
@@ -240,7 +240,7 @@
   .copy-btn svg{ width:14px; height:14px; }
   .copy-btn:hover{ background:var(--accent-dark); }
   .copy-btn:active{ transform:scale(0.97); }
-  .copy-btn.copied{ background:#219150; }
+  .copy-btn.copied{ background:#3AA683; }
 
   .doc-page{
     background:#fff;
@@ -253,6 +253,7 @@
   .doc-page table{ width:100%; border-collapse:collapse; }
   .doc-page td{ border-bottom:1px dotted #e3e3e3; }
   .doc-page table:last-of-type td{ border-bottom:none; }
+  .doc-page h1, .doc-page h3{ font-weight:bold; }
 
   .alt-copy{
     text-align:center;
@@ -271,7 +272,7 @@
   }
 
   .link-btn:hover{ color:var(--accent-dark); }
-  .link-btn.copied{ color:#8fa63a; text-decoration:none; }
+  .link-btn.copied{ color:#3AA683; text-decoration:none; }
 
   /* ---------- Mobile sticky copy bar ---------- */
   .mobile-copy-bar{
@@ -302,7 +303,7 @@
     cursor:pointer;
   }
 
-  .mobile-copy-bar button.copied{ background:#219150; }
+  .mobile-copy-bar button.copied{ background:#3AA683; }
   .mobile-copy-bar svg{ width:16px; height:16px; }
 
   @media (max-width:880px){ .mobile-copy-bar{ display:block; } }
@@ -390,8 +391,11 @@
         </div>
 
         <div class="field">
-          <label for="speedWireless">Speedtest red wireless (solo valores)</label>
-          <input type="text" id="speedWireless" placeholder="Ej: 45 Mbps bajada / 20 Mbps subida">
+          <label for="speedWirelessDown">Speedtest red wireless (solo valores)</label>
+          <div class="row">
+            <input type="text" id="speedWirelessDown" placeholder="Descarga (Mb/s)">
+            <input type="text" id="speedWirelessUp" placeholder="Carga (Mb/s)">
+          </div>
         </div>
 
         <div class="field">
@@ -400,8 +404,11 @@
         </div>
 
         <div class="field">
-          <label for="speedLan">Speedtest red LAN (solo valores)</label>
-          <input type="text" id="speedLan" placeholder="Ej: 90 Mbps bajada / 40 Mbps subida">
+          <label for="speedLanDown">Speedtest red LAN (solo valores)</label>
+          <div class="row">
+            <input type="text" id="speedLanDown" placeholder="Descarga (Mb/s)">
+            <input type="text" id="speedLanUp" placeholder="Carga (Mb/s)">
+          </div>
         </div>
 
         <div class="row">
@@ -468,7 +475,7 @@
 </div>
 
 <script>
-  const ids = ['nombre','cargo','mail','telefono','formulario','enlaces','wireless','speedWireless','lan','speedLan','redComunidad','usuariosSade','resolucion'];
+  const ids = ['nombre','cargo','mail','telefono','formulario','enlaces','wireless','speedWirelessDown','speedWirelessUp','lan','speedLanDown','speedLanUp','redComunidad','usuariosSade','resolucion'];
   const els = {};
   ids.forEach(id => els[id] = document.getElementById(id));
 
@@ -504,8 +511,34 @@
       + '</tr>';
   }
 
+  function fieldRowHtml(label, valueHtml, wLabel, wValue, boldValue){
+    const cell = valueHtml === '' ? '&nbsp;' : valueHtml;
+    const wrapped = boldValue ? '<b>' + cell + '</b>' : cell;
+    const valueStyle = F + ' font-size:12pt;' + (boldValue ? ' font-weight:bold;' : '');
+    return '<tr>'
+      + '<td width="' + wLabel + '%" valign="top" style="' + F + ' font-size:12pt; padding:3px 8px 3px 0;">' + escapeHtml(label) + '</td>'
+      + '<td width="' + wValue + '%" valign="top" style="' + valueStyle + ' padding:3px 0 3px 8px;">' + wrapped + '</td>'
+      + '</tr>';
+  }
+
+  // Formats Descarga/Carga speedtest values as a single line:
+  // "Descarga: X Mb/s / Carga: Y Mb/s". Returns '' if both are empty.
+  function speedCellHtml(down, up){
+    const parts = [];
+    if(down !== '') parts.push('Descarga: ' + escapeHtml(down) + ' Mb/s');
+    if(up !== '') parts.push('Carga: ' + escapeHtml(up) + ' Mb/s');
+    return parts.join(' / ');
+  }
+
+  function speedPlainText(down, up){
+    const parts = [];
+    if(down !== '') parts.push('Descarga: ' + down + ' Mb/s');
+    if(up !== '') parts.push('Carga: ' + up + ' Mb/s');
+    return parts.join(' / ');
+  }
+
   function heading(text, sizePt){
-    return '<p style="' + F + ' font-size:' + sizePt + 'pt; font-weight:bold; margin:0 0 4pt 0;"><b>' + escapeHtml(text) + '</b></p>';
+    return '<h3 style="' + F + ' font-size:' + sizePt + 'pt; font-weight:bold; margin:0 0 4pt 0;">' + escapeHtml(text) + '</h3>';
   }
 
   // Builds the report exactly as styled in the original Word document:
@@ -518,7 +551,7 @@
 
     let html = '';
 
-    html += '<p style="' + F + ' font-size:24pt; font-weight:bold; margin:0 0 8pt 0;"><b>Informe Técnico</b></p>';
+    html += '<h1 style="' + F + ' font-size:24pt; font-weight:bold; margin:0 0 8pt 0;">Informe Técnico</h1>';
     html += '<p style="' + F + ' font-size:12pt; margin:0 0 10pt 0;">Completar la totalidad de los campos que figuran a continuacion:</p>';
 
     html += heading('Contacto en Sitio', 14);
@@ -537,9 +570,9 @@
     html += tableOpen;
     html += fieldRow('Inspeccion Estado enlaces (Routers/ONT/CPE)', val('enlaces'), 30, 70, true);
     html += fieldRow('Informe Conectividad Wireless', val('wireless'), 30, 70, true);
-    html += fieldRow('Speedtest red wireless (solo valores)', val('speedWireless'), 30, 70, true);
+    html += fieldRowHtml('Speedtest red wireless (solo valores)', speedCellHtml(val('speedWirelessDown'), val('speedWirelessUp')), 30, 70, true);
     html += fieldRow('Informe Conectividad LAN', val('lan'), 30, 70, true);
-    html += fieldRow('Speedtest red LAN (solo valores)', val('speedLan'), 30, 70, true);
+    html += fieldRowHtml('Speedtest red LAN (solo valores)', speedCellHtml(val('speedLanDown'), val('speedLanUp')), 30, 70, true);
     html += fieldRow('Red Comunidad Activa (SI/NO)', val('redComunidad'), 30, 70, true);
     html += fieldRow('Usuarios SADE (separados por coma)', val('usuariosSade'), 30, 70, true);
     html += '</tbody></table>';
@@ -579,9 +612,9 @@
     lines.push('Status de conectividad');
     lines.push('Inspeccion Estado enlaces (Routers/ONT/CPE): ' + val('enlaces'));
     lines.push('Informe Conectividad Wireless: ' + val('wireless'));
-    lines.push('Speedtest red wireless (solo valores): ' + val('speedWireless'));
+    lines.push('Speedtest red wireless (solo valores): ' + speedPlainText(val('speedWirelessDown'), val('speedWirelessUp')));
     lines.push('Informe Conectividad LAN: ' + val('lan'));
-    lines.push('Speedtest red LAN (solo valores): ' + val('speedLan'));
+    lines.push('Speedtest red LAN (solo valores): ' + speedPlainText(val('speedLanDown'), val('speedLanUp')));
     lines.push('Red Comunidad Activa (SI/NO): ' + val('redComunidad'));
     lines.push('Usuarios SADE (separados por coma): ' + val('usuariosSade'));
     lines.push('');
@@ -607,12 +640,14 @@
   // Copies rich HTML (tables, bold, fonts) so it pastes into Word, Gmail,
   // Google Docs, etc. preserving the original document's layout.
   async function copyRichHtml(){
-    const html = buildReportHtml();
+    const html = '<div style="background-color:#ffffff; color:#000000;">' + buildReportHtml() + '</div>';
     const wrapper = document.createElement('div');
     wrapper.innerHTML = html;
     wrapper.style.position = 'fixed';
     wrapper.style.left = '-99999px';
     wrapper.style.top = '0';
+    wrapper.style.backgroundColor = '#ffffff';
+    wrapper.style.color = '#000000';
     document.body.appendChild(wrapper);
 
     let success = false;
